@@ -1,0 +1,30 @@
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="container">
+      <h1>Add Movie</h1>
+  
+      <label for="movie_name"><b>Movie Name</b></label>
+      <input type="text" placeholder="Enter Movie Name" name="movie_name" id="movie_name" value="{{data.movie_name}}" required><br>
+  
+      <label for="released_year"><b>Released Year</b></label>
+      <input type="number" placeholder="Enter Released Year" name="released_year" id="released_year" value="{{data.released_year}}"required><br>
+  
+      <label for="actors"><b>Actors</b></label>
+      <input type="text" placeholder="Actors" name="actors" id="actors" value="{{data.actors}}"required><br>
+
+      <label for="director"><b>Director</b></label>
+      <input type="text" placeholder="Actors" name="director" id="director" value="{{data.director}}"required><br>
+
+      <label for="producer"><b>Producer</b></label>
+      <input type="text" placeholder="Producer" name="producer" id="producer" value="{{data.producer}}"required><br>
+
+      <label for="budget"><b>Budget</b></label>
+      <input type="text" placeholder="Budget" name="budget" id="budget" value="{{data.budget}}"required><br>
+
+      <label for="review"><b>Review</b></label>
+      <input type="text" placeholder="Review" name="review" id="review" value="{{data.review}}"required><br>
+
+      <button type="submit" class="registerbtn">Save</button>
+    </div>
+  
+  </form>

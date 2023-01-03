@@ -1,0 +1,64 @@
+manage.py --- Main important file for running all the commands of django..
+FIlmIndustry:
+    __init__.py -- Its for converting a folder into python package...
+    asgi.py -- Async Server Gateway Interface()
+    wsgi.py -- Webserver Gateway Interface()
+    settings.py -- Any settings related to the project has to be writtened inside settings.py 
+    urls.py -- Defining the routes of our Django project..
+
+
+# Running the Project:
+    python manage.py runserver -- this will run the project at localhost:8000 port number (by default).
+    python manage.py runserver 8001 -- this will run the project at localhost:8001 port number
+
+
+# Creating the application..
+    python manage.py startapp app-name
+    python manage.py startapp filmapp
+
+
+filmapp:
+    __init__.py -- 
+    admin.py -- for making the chnages to the admin interface.
+    apps.py -- just for the app registration..
+    models.py -- everything related to DB tables..
+    tests.py -- For writing the testcases related the app..
+    views.py -- User functionality...
+
+
+# all the html pages should be created inside templates folder which should be inside app folder.
+
+
+****Once an app is created make sure you have registered that app in INSTALLED_APPS inside settings.py *****
+
+HTTP Methods:
+    GET : When we want to get the data from request..
+    POST : When we are giving the data to save..(new data)
+    PUT : Updating the already existing data..
+    DELETE : Deleting the data which is already existed..
+
+# Jinja Templating : Writing Python level syntax, loading of some other html,css file we use this.. 
+
+
+# Makemigrations: 
+    # Command for converting the models into SQL Level understanding queries..
+    # This command should be runned when ever we make the models chnages.
+
+    python manage.py makemigrations
+
+
+# All the SQL Queries Operation will be performed with ORM(Object Relational Mappers)..
+
+# SQL QUERY:
+    # All data:
+            # select * from table-name; -- sql query 
+            # Modelname.objects.all() --  ORM for fetching all the data from that particular model..
+
+    # Adding new Data:
+            # Insert into table-name(column1,column2,column3) values(value1,value2,value3);
+            # Modelname.objects.create(fieldname1=value1,fieldname2=value2)
+                # 1st Way
+                    # Movies.objects.create(movie_name=movie_name,released_year=released_year,actors=actors,director=director,producer=producer,budget=budget,review=review)
+                # 2nd Way
+                    # movie1 = Movies(movie_name='RRR',released_year=2022,actors='NTR,Ram,Alia',director='SSrajamouli',producer='DVVDannaya',budget='200crores',review='Good Movie')
+                    # movie1.save()
