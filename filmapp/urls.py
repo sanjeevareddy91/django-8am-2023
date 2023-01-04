@@ -22,6 +22,8 @@ urlpatterns = [
     path('register/',views.register),
     path('movie_add/',views.movie_add,name='movie_add'),
     path('movie_list/',views.movie_list,name="movie_list"),
-    path('movie_data/<id>',views.movie_data,name="movie_data")
+    path('movie_data/<id>',views.movie_data,name="movie_data"),
+    path('movie_update/<id>',views.movie_update,name="movie_update"),
+    path('movie_delete/<id>',views.movie_delete,name="movie_delete")
 
 ]

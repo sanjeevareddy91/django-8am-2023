@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import *
 # Create your views here.
@@ -55,3 +55,43 @@ def movie_data(request,id):
     data = Movies.objects.get(id=id)
     print(data)
     return render(request,'movie_data.html',{"data":data})
+
+def movie_update(request,id):
+    data= Movies.objects.get(id=id)
+    print(data)
+    print(request.method)
+    if request.method == "POST":
+        print(request.POST)
+        # 1st way to update the data.
+
+        # movie_name = request.POST.get('movie_name')
+        # released_year = request.POST.get('released_year')
+        # actors = request.POST.get('actors')
+        # director = request.POST.get('director')
+        # producer = request.POST.get('producer')
+        # budget = request.POST.get('budget')
+        # review = request.POST.get('review')
+        # data.released_year = released_year
+        # data.actors = actors
+        # data.director = director
+        # data.producer = producer
+        # data.budget = budget
+        # data.review = review
+        # data.save()
+
+        # 2nd way to update data
+        new_data = dict(request.POST)
+        new_data.pop('csrfmiddlewaretoken')
+        new_data.pop('movie_name')
+        new_data = {ele:new_data[ele][0] for ele in new_data}
+        print(new_data)
+        Movies.objects.filter(id=id).update(**new_data)
+        return redirect('movie_data',id=id)
+
+    return HttpResponse("Updated data!")
+
+
+def movie_delete(request,id):
+    data= Movies.objects.get(id=id)
+    data.delete()
+    return HttpResponse("Data Deleted Successfully!")
