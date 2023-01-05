@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import *
+from .forms import MovieModelForm,MovieForm
 # Create your views here.
 
 
@@ -95,3 +96,26 @@ def movie_delete(request,id):
     data= Movies.objects.get(id=id)
     data.delete()
     return HttpResponse("Data Deleted Successfully!")
+
+def movie_modelform(request):
+    form = MovieModelForm()
+    print(request.method)
+    if request.method=="POST":
+        form = MovieModelForm(request.POST)  # request.FILES -- > for adding the files from the htm.
+        if form.is_valid(): # this will validate all the field data is correct or not..
+            form.save()
+            return HttpResponse("Model Form Data saved!")
+    return render(request,'movie_modelform.html',{'form':form})
+
+def movie_form(request):
+    form = MovieForm()
+    if request.method == "POST":
+        form = MovieForm(request.POST)
+        if form.is_valid():
+            data = dict(request.POST)
+            data.pop('csrfmiddlewaretoken')
+            print(request.POST)
+            new_data = {ele:data[ele][0] for ele in data}
+            Movies.objects.create(**new_data)
+            return HttpResponse("Normal Form Data Saved!")
+    return render(request,'movie_form.html',{'form':form})
