@@ -1,6 +1,8 @@
 from django.forms import ModelForm,Form,IntegerField
 from .models import Movies
 from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
 
 class MovieModelForm(ModelForm):
     class Meta:
@@ -19,4 +21,29 @@ class MovieForm(Form):
     review= forms.CharField()
 
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('movie_name', css_class='form-group col-md-6 mb-0'),
+                Column('released_year', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('actors', css_class='form-group col-md-6 mb-0'),
+                Column('director', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('producer', css_class='form-group col-md-6 mb-0'),
+                Column('budget', css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('review', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'
+            ),
+            Submit('submit', 'Save')
+        )
 # crispy-form

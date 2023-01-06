@@ -1,6 +1,36 @@
-<h1>Hello</h1>
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
 <form method="POST">
     {% csrf_token %}
-    {{form.as_p}}
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.movie_name|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.released_year|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.actors|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.director|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.producer|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.budget|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-group col-md-12 mb-0">
+        {{ form.review|as_crispy_field }}
+    </div>
     <input type="submit">
 </form>
+{% endblock %}
