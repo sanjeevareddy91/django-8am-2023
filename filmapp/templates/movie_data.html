@@ -25,6 +25,9 @@
       <label for="review"><b>Review</b></label>
       <input type="text" placeholder="Review" name="review" id="review" value="{{data.review}}"required><br>
 
+      <label for="review"><b>Poster</b></label>
+      <img src="{{data.poster.url}}" alt=""><br>
+
       <button type="submit">Update</button>
       <button><a href="{% url 'movie_delete' data.id %}">Delete</a></button>
     </div>

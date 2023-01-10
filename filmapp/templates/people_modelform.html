@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.name|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            <label>DOB</label>
+            <input type="datetime-local" id="dob" name="dob">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.image|as_crispy_field }}
+        </div>
+    </div>
+
+    <input type="submit">
+</form>
+{% endblock %}

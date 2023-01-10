@@ -1,5 +1,5 @@
 from django.forms import ModelForm,Form,IntegerField
-from .models import Movies
+from .models import Movies,People
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
@@ -47,3 +47,10 @@ class MovieForm(Form):
             Submit('submit', 'Save')
         )
 # crispy-form
+
+
+class PeopleModelForm(ModelForm):
+    class Meta:
+        model = People
+        fields = "__all__"
+        # exclude = ('review',) # specific the fieldnames only in tuple format..

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import *
-from .forms import MovieModelForm,MovieForm
+from .forms import MovieModelForm,MovieForm,PeopleModelForm
 # Create your views here.
 
 
@@ -36,6 +36,7 @@ def movie_add(request):
         producer = request.POST.get('producer')
         budget = request.POST.get('budget')
         review = request.POST.get('review')
+        # poster = request.FILES.get('poster)
         print(movie_name)
         check_movie = Movies.objects.filter(movie_name=movie_name)
         if len(check_movie)>0:
@@ -101,7 +102,10 @@ def movie_modelform(request):
     form = MovieModelForm()
     print(request.method)
     if request.method=="POST":
-        form = MovieModelForm(request.POST)  # request.FILES -- > for adding the files from the htm.
+        form = MovieModelForm(request.POST,request.FILES)  # request.FILES -- > for adding the files from the htm.
+        # print(form)
+        print(request.POST)
+        print(request.FILES)
         if form.is_valid(): # this will validate all the field data is correct or not..
             form.save()
             return HttpResponse("Model Form Data saved!")
@@ -119,3 +123,16 @@ def movie_form(request):
             Movies.objects.create(**new_data)
             return HttpResponse("Normal Form Data Saved!")
     return render(request,'movie_form.html',{'form':form})
+
+def people_add(request):
+    form = PeopleModelForm()
+    print(request.method)
+    if request.method=="POST":
+        form = PeopleModelForm(request.POST,request.FILES)  # request.FILES -- > for adding the files from the htm.
+        # print(form)
+        print(request.POST)
+        print(request.FILES)
+        if form.is_valid(): # this will validate all the field data is correct or not..
+            form.save()
+            return HttpResponse("People Model Form Data saved!")
+    return render(request,'people_modelform.html',{'form':form})

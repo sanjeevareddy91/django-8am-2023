@@ -26,6 +26,7 @@ urlpatterns = [
     path('movie_update/<id>',views.movie_update,name="movie_update"),
     path('movie_delete/<id>',views.movie_delete,name="movie_delete"),
     path('movie_modelform/',views.movie_modelform,name='movie_modelform'),
-    path('movie_form/',views.movie_form,name='movie_form')
+    path('movie_form/',views.movie_form,name='movie_form'),
+    path('people_add/',views.people_add,name="people_add")
 
 ]
