@@ -100,6 +100,8 @@ def movie_delete(request,id):
 
 def movie_modelform(request):
     form = MovieModelForm()
+    print(form)
+    # import pdb;pdb.set_trace() # 
     print(request.method)
     if request.method=="POST":
         form = MovieModelForm(request.POST,request.FILES)  # request.FILES -- > for adding the files from the htm.
