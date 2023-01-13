@@ -8,10 +8,20 @@ class MovieModelForm(ModelForm):
     class Meta:
         model = Movies
         fields = "__all__"
-        exclude = ('actors',) # specific the fieldnames only in tuple format..
+        exclude = ('actors','director','producer') # specific the fieldnames only in tuple format..
         # fields = ('movie_name','actors','released_year','director','producer','budget','review')
 
     actors = forms.ModelMultipleChoiceField(
+        queryset = People.objects.all(),
+        widget = forms.CheckboxSelectMultiple
+    )
+
+    director = forms.ModelMultipleChoiceField(
+        queryset = People.objects.all(),
+        widget = forms.CheckboxSelectMultiple
+    )
+
+    producer = forms.ModelMultipleChoiceField(
         queryset = People.objects.all(),
         widget = forms.CheckboxSelectMultiple
     )

@@ -55,7 +55,7 @@ def movie_list(request):
 
 def movie_data(request,id):
     data = Movies.objects.get(id=id)
-    print(data)
+    print(data.actors.all())
     return render(request,'movie_data.html',{"data":data})
 
 def movie_update(request,id):
@@ -107,9 +107,26 @@ def movie_modelform(request):
         form = MovieModelForm(request.POST,request.FILES)  # request.FILES -- > for adding the files from the htm.
         # print(form)
         print(request.POST)
-        print(request.FILES)
+        # print(request.FILES)
         if form.is_valid(): # this will validate all the field data is correct or not..
-            form.save()
+            # actors_info = People.objects.get(id=request.POST['actors'])
+            # producers_info = People.objects.get(id=request.POST['producer'])
+            # directors_info = People.objects.get(id=request.POST['director'])
+
+            actors_info = People.objects.filter(id__in=request.POST['actors'])
+            producers_info = People.objects.filter(id__in=request.POST['producer'])
+            directors_info = People.objects.filter(id__in=request.POST['director'])
+            print(actors_info)
+            print(producers_info)
+            print(directors_info)
+            data = form.save(commit=False)
+            print(data)
+            print(type(data))
+            # data.save()
+            data.actors.add(actors_info)
+            data.producer.add(producers_info)
+            data.director.add(directors_info)
+            # data.save()
             return HttpResponse("Model Form Data saved!")
     return render(request,'movie_modelform.html',{'form':form})
 
@@ -132,9 +149,11 @@ def people_add(request):
     if request.method=="POST":
         form = PeopleModelForm(request.POST,request.FILES)  # request.FILES -- > for adding the files from the htm.
         # print(form)
-        print(request.POST)
-        print(request.FILES)
+        # print(request.POST)
+        # print(request.FILES)
         if form.is_valid(): # this will validate all the field data is correct or not..
-            form.save()
+            print(request.POST)
+            
+            # form.save()
             return HttpResponse("People Model Form Data saved!")
     return render(request,'people_modelform.html',{'form':form})
