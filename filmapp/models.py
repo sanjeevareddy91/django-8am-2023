@@ -1,5 +1,6 @@
 from django.db import models
 
+from django.contrib.auth.models import User 
 # Create your models here.
 
 
@@ -28,3 +29,12 @@ class Movies(models.Model):
         db_table = 'movies'
 # create table movies(movie_name varchar(20))
 
+class Register_User(models.Model):
+    user_data = models.ForeignKey(User,on_delete=models.CASCADE)
+    mobile = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.user_data.username
+
+    class Meta:
+        db_table = 'register_user'

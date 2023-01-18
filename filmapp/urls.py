@@ -17,9 +17,9 @@ from django.urls import path
 from filmapp import views
 
 urlpatterns = [
-    path('',views.hello_world,name="hello"),
+    # path('',views.hello_world,name="hello"),
     path('base/',views.base_file,name="base_file"),
-    path('register/',views.register),
+    path('',views.register,name="register"),
     path('movie_add/',views.movie_add,name='movie_add'),
     path('movie_list/',views.movie_list,name="movie_list"),
     path('movie_data/<id>',views.movie_data,name="movie_data"),

@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import *
 from .forms import MovieModelForm,MovieForm,PeopleModelForm
+from django.contrib.auth.models import User
 # Create your views here.
 
 
@@ -18,10 +19,14 @@ def register(request):
     print(request)
     print(request.POST)
     if request.method == "POST":
-        print(request.POST['email'])
-        print(request.POST['psw'])
-        print(request.POST['psw-repeat'])
-
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        mobile = request.POST['mobile']
+        data = User(username=username,email=email,is_staff=True)
+        data.set_password(password)
+        data.save()
+        Register_User.objects.create(user_data=data,mobile=mobile)
     return render(request,'register.html')
 
 
@@ -112,21 +117,21 @@ def movie_modelform(request):
             # actors_info = People.objects.get(id=request.POST['actors'])
             # producers_info = People.objects.get(id=request.POST['producer'])
             # directors_info = People.objects.get(id=request.POST['director'])
-
-            actors_info = People.objects.filter(id__in=request.POST['actors'])
-            producers_info = People.objects.filter(id__in=request.POST['producer'])
-            directors_info = People.objects.filter(id__in=request.POST['director'])
+            import pdb;pdb.set_trace()
+            actors_info = People.objects.filter(id__in=request.POST.getlist('actors'))
+            producers_info = People.objects.filter(id__in=request.POST.getlist('producer'))
+            directors_info = People.objects.filter(id__in=request.POST.getlist('director'))
             print(actors_info)
             print(producers_info)
             print(directors_info)
             data = form.save(commit=False)
             print(data)
             print(type(data))
-            # data.save()
-            data.actors.add(actors_info)
-            data.producer.add(producers_info)
-            data.director.add(directors_info)
-            # data.save()
+            data.save()
+            data.actors.add(*actors_info)
+            data.producer.add(*producers_info)
+            data.director.add(*directors_info)
+            data.save()
             return HttpResponse("Model Form Data saved!")
     return render(request,'movie_modelform.html',{'form':form})
 
