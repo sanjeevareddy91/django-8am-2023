@@ -1,5 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <h4>Movie List</h4>
 
 {% for ele in data %}
     <a href="{% url 'movie_data' ele.id %}">{{ele.movie_name}}</a><br>
 {% endfor %}
+{% endblock %}

@@ -138,3 +138,22 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MEDIA_URL = "/"
 MEDIA_ROOT = BASE_DIR
+
+
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'sanjeevasimply@gmail.com'
+EMAIL_HOST_PASSWORD = 'your-gmail-app-created-password'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

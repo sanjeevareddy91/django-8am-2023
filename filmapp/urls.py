@@ -27,6 +27,9 @@ urlpatterns = [
     path('movie_delete/<id>',views.movie_delete,name="movie_delete"),
     path('movie_modelform/',views.movie_modelform,name='movie_modelform'),
     path('movie_form/',views.movie_form,name='movie_form'),
-    path('people_add/',views.people_add,name="people_add")
+    path('people_add/',views.people_add,name="people_add"),
+    path('login',views.login_user,name="login_user"),
+    path('user_details/<id>',views.user_data,name="user_data"),
+    path('logout/',views.logout_user,name="logout_user")
 
 ]

@@ -3,6 +3,13 @@ from django.http import HttpResponse
 from .models import *
 from .forms import MovieModelForm,MovieForm,PeopleModelForm
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
+import sendgrid
+import os
+from sendgrid.helpers.mail import Mail, Email, To, Content
+from django.contrib import messages
+from django.contrib.auth import authenticate,login,logout
 # Create your views here.
 
 
@@ -23,10 +30,14 @@ def register(request):
         email = request.POST['email']
         password = request.POST['password']
         mobile = request.POST['mobile']
-        data = User(username=username,email=email,is_staff=True)
-        data.set_password(password)
-        data.save()
-        Register_User.objects.create(user_data=data,mobile=mobile)
+        # data = User(username=username,email=email,is_staff=True)
+        # data.set_password(password)
+        # data.save()
+        # Register_User.objects.create(user_data=data,mobile=mobile)
+
+        # import pdb;pdb.set_trace()
+        # send_mail(subject='Registration Confirmation',message="Thanks for the registration. You are successfully registered in Filmindustry application.",from_email='sanjeevasimply@gmail.com',recipient_list=[email])
+        messages.success(request,'Registration is successful and email sent')
     return render(request,'register.html')
 
 
@@ -117,7 +128,7 @@ def movie_modelform(request):
             # actors_info = People.objects.get(id=request.POST['actors'])
             # producers_info = People.objects.get(id=request.POST['producer'])
             # directors_info = People.objects.get(id=request.POST['director'])
-            import pdb;pdb.set_trace()
+            # import pdb;pdb.set_trace()
             actors_info = People.objects.filter(id__in=request.POST.getlist('actors'))
             producers_info = People.objects.filter(id__in=request.POST.getlist('producer'))
             directors_info = People.objects.filter(id__in=request.POST.getlist('director'))
@@ -162,3 +173,27 @@ def people_add(request):
             # form.save()
             return HttpResponse("People Model Form Data saved!")
     return render(request,'people_modelform.html',{'form':form})
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user_check = authenticate(username=username,password=password)
+        if user_check:
+            login(request,user_check)
+            messages.success(request,user_check.username+" Logged In successfully")
+            return redirect('user_data',user_check.id)
+        else:
+            messages.error(request,"Invalid credentials")
+    return render(request,'login.html')
+
+def user_data(request,id):
+    id_info = User.objects.get(id=id)
+    data = Register_User.objects.get(user_data=id_info)
+    return render(request,'user_data.html',{'data':data})
+
+def logout_user(request):
+    # print(request.user)
+    logout(request)
+    messages.success(request,'Logged Out Successfully')
+    return redirect('login_user')
