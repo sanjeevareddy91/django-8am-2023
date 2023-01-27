@@ -32,6 +32,7 @@ class Movies(models.Model):
 class Register_User(models.Model):
     user_data = models.ForeignKey(User,on_delete=models.CASCADE)
     mobile = models.CharField(max_length=10)
+    otp = models.CharField(max_length=7,null=True,blank=True)
 
     def __str__(self):
         return self.user_data.username

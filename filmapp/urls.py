@@ -30,6 +30,9 @@ urlpatterns = [
     path('people_add/',views.people_add,name="people_add"),
     path('login',views.login_user,name="login_user"),
     path('user_details/<id>',views.user_data,name="user_data"),
-    path('logout/',views.logout_user,name="logout_user")
+    path('logout/',views.logout_user,name="logout_user"),
+    path('forgot_password/',views.forgot_password,name="forgot_password"),
+    path('verify_otp/',views.verify_otp,name="verify_otp"),
+    path('changes_password/<id>',views.change_password,name="change_password")
 
 ]

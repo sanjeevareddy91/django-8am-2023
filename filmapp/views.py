@@ -10,6 +10,7 @@ import os
 from sendgrid.helpers.mail import Mail, Email, To, Content
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
+import random
 # Create your views here.
 
 
@@ -197,3 +198,47 @@ def logout_user(request):
     logout(request)
     messages.success(request,'Logged Out Successfully')
     return redirect('login_user')
+
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        user_data = User.objects.filter(email=email)
+        print(user_data)
+        if user_data:
+            otp = str(random.randint(1000,9999999))
+            data = Register_User.objects.get(user_data=user_data.first())
+            print(data)
+            data.otp = otp
+            data.save()
+            message = "Please use the below OTP for changing the password. {}".format(otp)
+            send_mail(subject='OTP verification',message=message,from_email='gsanjeevreddy91@gmail.com',recipient_list=[email])
+            messages.success(request,'Verification OTP has been sent to your email id.')
+            return redirect('verify_otp')
+        else:
+            messages.error(request,'Email id doenot exist!')
+    return render(request,'forgot_password.html')
+
+def verify_otp(request):
+    if request.method == "POST":
+        otp = request.POST['otp']
+        otp_data = Register_User.objects.filter(otp=otp)
+        if otp_data:
+            messages.success(request,'OTP verified successfully,Please change your password!')
+            return redirect('change_password',id=otp_data.first().user_data.id)
+        else:
+            messages.error(request,'Invalid OTP')
+    return render(request,'verify_otp.html')
+
+def change_password(request,id):
+    if request.method == "POST":
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+        if password != confirm_password:
+            messages.error(request,'Both passwords are not matching')
+            return redirect('change_password',id=id)
+        data = User.objects.get(id=id)
+        data.set_password(password)
+        data.save()
+        messages.success(request,'Password Changed Successfully')
+        return redirect('login_user')
+    return render(request,'change_password.html')

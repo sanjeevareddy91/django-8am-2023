@@ -143,8 +143,8 @@ MEDIA_ROOT = BASE_DIR
 
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'sanjeevasimply@gmail.com'
-EMAIL_HOST_PASSWORD = 'your-gmail-app-created-password'
+EMAIL_HOST_USER = 'your email id'
+EMAIL_HOST_PASSWORD = 'yur app password'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
