@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.urls import reverse,reverse_lazy
 from django.http import HttpResponse
 from .models import *
 from .forms import MovieModelForm,MovieForm,PeopleModelForm
@@ -11,6 +12,10 @@ from sendgrid.helpers.mail import Mail, Email, To, Content
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 import random
+from django.views import View
+from django.views.generic.edit import CreateView,UpdateView,DeleteView
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 # Create your views here.
 
 
@@ -242,3 +247,35 @@ def change_password(request,id):
         messages.success(request,'Password Changed Successfully')
         return redirect('login_user')
     return render(request,'change_password.html')
+
+
+# class based views
+
+
+# get -- 
+# post --
+# put -- 
+# delete --
+class HelloClassView(View):
+    def get(self,request):
+        return HttpResponse("Hello Classed Based View")
+
+
+# Generic View..
+class RegisterUserView(CreateView):
+    model = Register_User
+    fields = "__all__"
+    success_url = reverse_lazy('cls_hello')  # Reverse_lazy this help you to redirect to respective URL after the successful request..
+
+
+class RegisterUserListView(ListView):
+    model = Register_User
+
+
+class RegisterUserDetailView(DetailView):
+    model = Register_User
+
+class RegisterUserUpdateView(UpdateView):
+    model = Register_User
+    fields = "__all__"
+    success_url = reverse_lazy('cls_hello')

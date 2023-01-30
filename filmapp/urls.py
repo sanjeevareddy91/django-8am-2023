@@ -33,6 +33,11 @@ urlpatterns = [
     path('logout/',views.logout_user,name="logout_user"),
     path('forgot_password/',views.forgot_password,name="forgot_password"),
     path('verify_otp/',views.verify_otp,name="verify_otp"),
-    path('changes_password/<id>',views.change_password,name="change_password")
+    path('changes_password/<id>',views.change_password,name="change_password"),
+    path('cls_hello/',views.HelloClassView.as_view(),name="cls_hello"),
+    path('cls_register/',views.RegisterUserView.as_view(),name='cls_register'),
+    path('cls_register_list/',views.RegisterUserListView.as_view(),name="cls_register_list"),
+    path('cls_register_detail/<pk>/',views.RegisterUserDetailView.as_view(),name="cls_register_detail"),
+    path('cls_register_update/<pk>/',views.RegisterUserUpdateView.as_view(),name="cls_register_update")
 
 ]
