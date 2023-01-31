@@ -279,3 +279,49 @@ class RegisterUserUpdateView(UpdateView):
     model = Register_User
     fields = "__all__"
     success_url = reverse_lazy('cls_hello')
+
+# CreateListDetailUpdateDeleteView
+
+
+# Django Restframework Apis:::::
+
+# Function Based Apis..
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['GET','POST','PUT','DELETE'])
+def hello_api(request):
+    dummy_data = {
+        "sanjeeva":{
+            "mobile":884783783,
+            "email" : "gsanjeevreddy19@gmail.com"
+        },
+        "rajesh":{
+            "mobile":903930333,
+            "email":'rajesh@gmail.com'
+        }
+    }
+    if request.method == "GET":
+        return Response({"message":"Hello World"})
+    elif request.method == "POST":
+        data = request.data
+        email = "gsanjeevreddy91@gmail.com"
+        password = "356227727"
+        if data.get('email') == email and data.get('password') == password:
+            return Response({
+                "name" : "sanjeeva",
+                "message" : "Logged In"
+            })
+        else:
+            return Response({
+                "message" : "Invalid Credentials"
+            })
+    elif request.method == "DELETE":
+        print(request.data)
+        dummy_data.pop(request.data.get('name'))
+        return Response({
+            "message":"Deleted SucessFully",
+            "data":dummy_data
+        })

@@ -38,6 +38,7 @@ urlpatterns = [
     path('cls_register/',views.RegisterUserView.as_view(),name='cls_register'),
     path('cls_register_list/',views.RegisterUserListView.as_view(),name="cls_register_list"),
     path('cls_register_detail/<pk>/',views.RegisterUserDetailView.as_view(),name="cls_register_detail"),
-    path('cls_register_update/<pk>/',views.RegisterUserUpdateView.as_view(),name="cls_register_update")
+    path('cls_register_update/<pk>/',views.RegisterUserUpdateView.as_view(),name="cls_register_update"),
+    path('hello_api/',views.hello_api,name='hello_api')
 
 ]
