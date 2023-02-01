@@ -16,6 +16,7 @@ from django.views import View
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+import json
 # Create your views here.
 
 
@@ -325,3 +326,31 @@ def hello_api(request):
             "message":"Deleted SucessFully",
             "data":dummy_data
         })
+
+@api_view(['GET','POST'])
+def movies_api_view(request):
+    if request.method == "GET":
+        all_movies = list(Movies.objects.all().values())
+        # import pdb;pdb.set_trace()
+        return Response({"movies":all_movies})
+    elif request.method == "POST":
+        print(request)
+        new_data = request.data.get('data')
+        converted_data = json.loads(new_data)
+        # print(request.data)
+        actor_info = [People.objects.get(id=converted_data['actors'])]
+        director_info = [People.objects.get(id=converted_data['director'])]
+        producer_info = [People.objects.get(id=converted_data['producer'])]
+        converted_data['poster'] = request.data['poster']
+        movie_data = Movies(movie_name=converted_data['movie_name'],poster=converted_data['poster'],released_year=converted_data['released_year'],budget=converted_data['budget'],review=converted_data['review'])
+        movie_data.save()
+        movie_data.actors.add(*actor_info)
+        movie_data.director.add(*director_info)
+        movie_data.producer.add(*producer_info)
+        movie_data.save()
+        # import pdb;pdb.set_trace()
+        converted_data['poster'] = request.data['poster'].name
+        # print(converted_data)
+        # print(dir(request.data['poster']))
+        # print(request.data['poster'].name)
+        return Response(converted_data)
