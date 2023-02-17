@@ -6,9 +6,9 @@ from .forms import MovieModelForm,MovieForm,PeopleModelForm
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
-import sendgrid
+# import sendgrid
 import os
-from sendgrid.helpers.mail import Mail, Email, To, Content
+# from sendgrid.helpers.mail import Mail, Email, To, Content
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 import random
@@ -17,6 +17,8 @@ from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 import json
+from .serializers import MovieSerializer
+from rest_framework.authtoken.models import Token
 # Create your views here.
 
 
@@ -327,7 +329,7 @@ def hello_api(request):
             "data":dummy_data
         })
 
-@api_view(['GET','POST'])
+@api_view(['GET','POST','PUT',"DELETE"])
 def movies_api_view(request):
     if request.method == "GET":
         all_movies = list(Movies.objects.all().values())
@@ -337,6 +339,12 @@ def movies_api_view(request):
         print(request)
         new_data = request.data.get('data')
         converted_data = json.loads(new_data)
+        print(converted_data.get('movie_name'))
+        # import pdb;pdb.set_trace()
+        if (converted_data.get('movie_name') == None) or ('movie_name' in converted_data and converted_data.get('movie_name') == ''):
+            return Response({
+                "message" : "movie_name is required field"
+            }) 
         # print(request.data)
         actor_info = [People.objects.get(id=converted_data['actors'])]
         director_info = [People.objects.get(id=converted_data['director'])]
@@ -354,3 +362,332 @@ def movies_api_view(request):
         # print(dir(request.data['poster']))
         # print(request.data['poster'].name)
         return Response(converted_data)
+    elif request.method == "PUT":
+        print(request.data)
+        new_data = request.data.get('data')
+        converted_data = json.loads(new_data)
+        actor_info = [People.objects.get(id=converted_data['actors'])]
+        director_info = [People.objects.get(id=converted_data['director'])]
+        producer_info = [People.objects.get(id=converted_data['producer'])]
+        converted_data['poster'] = request.data['poster']
+        movie_data = Movies.objects.get(id=converted_data['id'])
+        movie_data.poster.delete(True) # delete the previous poster assigned t the record from the file path..
+        movie_data.movie_name = converted_data['movie_name']
+        movie_data.released_year = converted_data['released_year']
+        movie_data.budget = converted_data['budget']
+        movie_data.review = converted_data['review']
+        movie_data.poster = converted_data['poster']
+        movie_data.save()
+        movie_data.actors.add(*actor_info)
+        movie_data.director.add(*director_info)
+        movie_data.producer.add(*producer_info)
+        movie_data.save()
+        converted_data['poster'] = request.data['poster'].name
+        return Response(converted_data)
+
+    elif request.method == "DELETE":
+        print(request.data)
+        new_data = request.data.get('id')
+        Movies.objects.get(id=new_data).delete()
+        return Response({
+            "message" :"Deleted Successfully"
+        })
+
+@api_view(['GET','POST'])
+def movies_api_with_serializer(request):
+    if request.method == "GET":
+        all_movies = Movies.objects.all()
+        print(all_movies)
+        serializer = MovieSerializer(all_movies,many=True)
+        print(serializer.data)
+        # import pdb;pdb.set_trace()
+        return Response({"movies":serializer.data})
+
+    elif request.method == "POST":
+        print(request.data)
+        new_data = request.data.get('data')
+        converted_data = json.loads(new_data)
+        converted_data['poster'] = request.data['poster']
+        print(converted_data)
+        serializer = MovieSerializer(data=converted_data)
+        print(serializer)
+        if serializer.is_valid():
+            data = serializer.save()
+            actor_info = [People.objects.get(id=converted_data['actors'])]
+            director_info = [People.objects.get(id=converted_data['director'])]
+            producer_info = [People.objects.get(id=converted_data['producer'])]
+            data.actors.add(*actor_info)
+            data.producer.add(*producer_info)
+            data.director.add(*director_info)
+            data.save()
+            return Response({
+                "message" : "Movie Added"
+            })
+        else:
+            return Response({
+                "message" : "Validate the data"
+            })
+
+
+@api_view(["GET","PUT","DELETE"])
+def movies_api_with_serializer_with_pk(request,pk):
+    try:
+        movies_data = Movies.objects.get(pk=pk)
+    except:
+        return Response({
+            "message" : "Record doesnot exist"
+        })
+
+    if request.method == "GET":
+        # print(request.data)
+        # movies_data = Movies.objects.get(pk=pk)
+        # print(movies_data)
+        serializer = MovieSerializer(movies_data)
+        return Response({
+            "movie" : serializer.data
+        })
+    elif request.method == "PUT":
+        print(request.data)
+        new_data = request.data.get('data')
+        converted_data = json.loads(new_data)
+        converted_data['poster'] = request.data['poster']
+        print(converted_data)
+        serializer = MovieSerializer(movies_data,data=converted_data)
+        print(serializer)
+        if serializer.is_valid():
+            data = serializer.save()
+            actor_info = [People.objects.get(id=converted_data['actors'])]
+            director_info = [People.objects.get(id=converted_data['director'])]
+            producer_info = [People.objects.get(id=converted_data['producer'])]
+            data.actors.add(*actor_info)
+            data.producer.add(*producer_info)
+            data.director.add(*director_info)
+            data.save()
+            return Response({
+                "message" : "Movie Updated"
+            })
+        else:
+            return Response({
+                "message" : "Validate the data"
+            })
+
+    elif request.method == "DELETE":
+        movies_data.delete()
+        return Response({
+            "message":"Movie Delete successfully"
+        })
+
+
+# Class Based APIS():
+    # These are segregated into 3 types again:
+    #     1) Classbased apis(APIView)
+    #     2) Generic Api Views()
+    #     3) Viewsets
+
+from rest_framework.views import APIView
+
+from rest_framework.permissions import IsAuthenticated
+
+class MoviesApiView(APIView):
+    # permission_classes = [IsAuthenticated]
+    
+    def get(self,request):
+        all_movies = Movies.objects.all()
+        serializer = MovieSerializer(all_movies,many=True)
+        # import pdb;pdb.set_trace()
+        return Response({"movies":serializer.data})
+
+    def post(self,request):
+        print(request.data)
+        new_data = request.data.get('data')
+        converted_data = json.loads(new_data)
+        converted_data['poster'] = request.data['poster']
+        print(converted_data)
+        serializer = MovieSerializer(data=converted_data)
+        print(serializer)
+        if serializer.is_valid():
+            data = serializer.save()
+            actor_info = [People.objects.get(id=converted_data['actors'])]
+            director_info = [People.objects.get(id=converted_data['director'])]
+            producer_info = [People.objects.get(id=converted_data['producer'])]
+            data.actors.add(*actor_info)
+            data.producer.add(*producer_info)
+            data.director.add(*director_info)
+            data.save()
+            return Response({
+                "message" : "Movie Added"
+            })
+        else:
+            return Response({
+                "message" : "Validate the data"
+            })
+
+class MoviesApiViewWithPK(APIView):
+
+    def get_object(self,pk):
+        try:
+            # import pdb;pdb.set_trace()
+            all_movies = Movies.objects.get(pk=pk)
+            return {"data":all_movies}
+        except:
+            return {
+                "message":"record doesnot exist"
+            }
+    def get(self,request,pk):
+        movies_data = self.get_object(pk)
+        # import pdb;pdb.set_trace()
+        if movies_data.get('message'):
+            return Response({"message":movies_data.get('message')})
+        serializer = MovieSerializer(movies_data['data'])
+        return Response({"movies":serializer.data})
+
+    def put(self,request,pk):
+        print(request.data)
+        movies_data = self.get_object(pk)
+        new_data = request.data.get('data')
+        converted_data = json.loads(new_data)
+        converted_data['poster'] = request.data['poster']
+        print(converted_data)
+        serializer = MovieSerializer(movies_data,data=converted_data)
+        print(serializer)
+        if serializer.is_valid():
+            data = serializer.save()
+            actor_info = [People.objects.get(id=converted_data['actors'])]
+            director_info = [People.objects.get(id=converted_data['director'])]
+            producer_info = [People.objects.get(id=converted_data['producer'])]
+            data.actors.add(*actor_info)
+            data.producer.add(*producer_info)
+            data.director.add(*director_info)
+            data.save()
+            return Response({
+                "message" : "Movie Updated"
+            })
+        else:
+            return Response({
+                "message" : "Validate the data"
+            })
+
+    def delete(self,request,pk):
+        movies_data = self.get_object(pk)
+        movies_data.delete()
+        return Response({
+            "message":"Movie Delete successfully"
+        })
+
+
+# Generic APIView..
+
+from rest_framework.generics import ListAPIView,CreateAPIView,ListCreateAPIView,RetrieveAPIView,RetrieveUpdateDestroyAPIView 
+
+
+class Generic_List(ListAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+
+class Generic_Create(CreateAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+    def create(self,request,*args,**kwargs):
+        # import pdb;pdb.set_trace()
+        data = request.data
+        actor_info = [People.objects.get(id=data.pop('actors'))]
+        producer_info = [People.objects.get(id=data.pop('producer'))]
+        director_info = [People.objects.get(id=data.pop('director'))]
+        movie_data = Movies.objects.create(**data)
+        movie_data.actors.add(*actor_info)
+        movie_data.producer.add(*producer_info)
+        movie_data.director.add(*director_info)
+        movie_data.save()
+        return Response({
+            "Message":"Movie Saved"
+        })
+
+class Generic_List(ListAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+
+class Generic_CreateList(ListCreateAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+    def create(self,request,*args,**kwargs):
+        data = request.data
+        actor_info = [People.objects.get(id=data.pop('actors'))]
+        producer_info = [People.objects.get(id=data.pop('producer'))]
+        director_info = [People.objects.get(id=data.pop('director'))]
+        movie_data = Movies.objects.create(**data)
+        movie_data.actors.add(*actor_info)
+        movie_data.producer.add(*producer_info)
+        movie_data.director.add(*director_info)
+        movie_data.save()
+        return Response({
+            "Message":"Movie Saved"
+        })
+
+class Generic_Retrieve(RetrieveAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+
+class Generic_Retrieve_Update_Delete(RetrieveUpdateDestroyAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+    def update(self,request,*args,**kwargs):
+        data = request.data
+        actor_info = [People.objects.get(id=data.pop('actors'))]
+        producer_info = [People.objects.get(id=data.pop('producer'))]
+        director_info = [People.objects.get(id=data.pop('director'))]
+        new_data = Movies.objects.filter(id=kwargs['pk'])
+        movie_data = new_data.update(**data)
+        new_data[0].actors.add(*actor_info)
+        new_data[0].producer.add(*producer_info)
+        new_data[0].director.add(*director_info)
+        new_data[0].save()
+        return Response({
+            "Message":"Movie Updated"
+        })
+
+
+# Django Viewsets
+
+from rest_framework import viewsets 
+
+class Movieviewset(viewsets.ModelViewSet):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+    def create(self,request,*args,**kwargs):
+        data = request.data
+        actor_info = [People.objects.get(id=data.pop('actors'))]
+        producer_info = [People.objects.get(id=data.pop('producer'))]
+        director_info = [People.objects.get(id=data.pop('director'))]
+        movie_data = Movies.objects.create(**data)
+        movie_data.actors.add(*actor_info)
+        movie_data.producer.add(*producer_info)
+        movie_data.director.add(*director_info)
+        movie_data.save()
+        return Response({
+            "Message":"Movie Saved"
+        })
+
+
+@api_view(['POST'])
+def auth_token_create (request):
+    if request.method == "POST":
+        print(request.data)
+        user_check = authenticate(username=request.data['username'],password=request.data['password'])
+        if user_check:
+            token_data = Token.objects.create(user=user_check)
+
+            return Response({
+                "message":"Token Generated Successfully",
+                'token':token_data.key
+            })
+        else:
+            return Response({
+                "message":"Invalid credentials"
+            })
