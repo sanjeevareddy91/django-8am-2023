@@ -35,7 +35,7 @@ schema_view = get_schema_view(
 
 from rest_framework.authtoken import views as auth_view
 
-from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView)
+# from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView)
 
 router = routers.DefaultRouter()
 
@@ -83,8 +83,8 @@ urlpatterns = [
     path('generic_retrieve_update_delete/<pk>',views.Generic_Retrieve_Update_Delete.as_view(),name='generic_retrieve_update_delete'),
     path('create_auth_token/',views.auth_token_create,name="create_auth_token"),
     path('api-auth-token/',auth_view.obtain_auth_token,name="api-auth-token"),
-    path('api/token/',TokenObtainPairView.as_view(),name="token_obtain_pair"),
-    path('api/token/refresh/',TokenRefreshView.as_view(),name="token_refresh"),
+    # path('api/token/',TokenObtainPairView.as_view(),name="token_obtain_pair"),
+    # path('api/token/refresh/',TokenRefreshView.as_view(),name="token_refresh"),
     
 
 
