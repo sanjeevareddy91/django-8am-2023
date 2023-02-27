@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     'crispy_forms',
     'rest_framework',
     'drf_yasg', # latest version for swagger..,
-    # 'rest_framework.authtoken',
+    'rest_framework.authtoken',
     # 'rest_framework_simplejwt'
-    'oauth2_provider',
-    'social_django',
-    'drf_social_oauth2',
+    # 'oauth2_provider',
+    # 'social_django',
+    # 'drf_social_oauth2',
 ]
 
 MIDDLEWARE = [
@@ -168,24 +168,26 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#                'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES':(
-#                 'rest_framework.permissions.IsAuthenticated',
-#     ),
-
-# }
-
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'oauth2_provider.ext.rest_framework.OAuth2Authentication',  # django-oauth-toolkit < 1.0.0
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
-        'drf_social_oauth2.authentication.SocialAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
     ),
+    # 'DEFAULT_PERMISSION_CLASSES':(
+    #             'rest_framework.permissions.IsAuthenticated',
+    # ),
+
 }
+
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         # 'oauth2_provider.ext.rest_framework.OAuth2Authentication',  # django-oauth-toolkit < 1.0.0
+#         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+#         'drf_social_oauth2.authentication.SocialAuthentication',
+#     ),
+# }
 # JWT_AUTH = {
 #     # how long the original token is valid for
 #     'JWT_EXPIRATION_DELTA': timedelta(days=2),
@@ -198,27 +200,27 @@ REST_FRAMEWORK = {
 #     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
 # }
 
-AUTHENTICATION_BACKENDS = (
-    # Others auth providers (e.g. Google, OpenId, etc)
-    # Facebook OAuth2
-    'social_core.backends.facebook.FacebookAppOAuth2',
-    'social_core.backends.facebook.FacebookOAuth2',
+# AUTHENTICATION_BACKENDS = (
+#     # Others auth providers (e.g. Google, OpenId, etc)
+#     # Facebook OAuth2
+#     # 'social_core.backends.facebook.FacebookAppOAuth2',
+#     # 'social_core.backends.facebook.FacebookOAuth2',
 
-    # drf_social_oauth2
-    'drf_social_oauth2.backends.DjangoOAuth2',
+#     # # drf_social_oauth2
+#     # 'drf_social_oauth2.backends.DjangoOAuth2',
 
-    # Django
-    'django.contrib.auth.backends.ModelBackend',
-)
+#     # Django
+#     'django.contrib.auth.backends.ModelBackend',
+# )
 
 
-# Facebook configuration
-SOCIAL_AUTH_FACEBOOK_KEY = 'facebook-key'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'facebook-secret'
+# # Facebook configuration
+# SOCIAL_AUTH_FACEBOOK_KEY = 'facebook-key'
+# SOCIAL_AUTH_FACEBOOK_SECRET = 'facebook-secret'
 
-# Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from Facebook.
-# Email is not sent by default, to get it, you must request the email permission.
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
-SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
-    'fields': 'id, name, email'
-}
+# # Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from Facebook.
+# # Email is not sent by default, to get it, you must request the email permission.
+# SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+# SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+#     'fields': 'id, name, email'
+# }

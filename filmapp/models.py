@@ -39,3 +39,15 @@ class Register_User(models.Model):
 
     class Meta:
         db_table = 'register_user'
+
+
+from django.contrib.auth.signals import user_logged_in
+
+
+def do_stuff(sender, user, request, **kwargs):
+    import pdb;pdb.set_trace()
+    print(user)
+    print(request)
+    print("login user")
+
+user_logged_in.connect(do_stuff)

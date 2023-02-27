@@ -19,6 +19,8 @@ from django.views.generic.detail import DetailView
 import json
 from .serializers import MovieSerializer
 from rest_framework.authtoken.models import Token
+# from filmapp.models import do_stuff
+
 # Create your views here.
 
 
@@ -489,9 +491,10 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 class MoviesApiView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     
     def get(self,request):
+        import pdb;pdb.set_trace()
         all_movies = Movies.objects.all()
         serializer = MovieSerializer(all_movies,many=True)
         # import pdb;pdb.set_trace()
